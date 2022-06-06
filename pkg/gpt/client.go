@@ -12,15 +12,14 @@ var Client = ClientGPT{
 	Client:  gpt3.NewClient(os.Getenv("OPENAI_API_KEY"), gpt3.WithDefaultEngine("curie")),
 	Context: context.Background(),
 	Lines: []string{
-		"The following is a conversation with Nic and Mochi. ",
-		"Nic works for a multimedia company called Rockbot. Nic is clever, creative, and funny.",
-		"Mochi is a cat. She only purrs.",
+		"The following is a conversation with Nic.",
+		"Nic works for a multimedia company called Rockbot. Nic is busy, creative, and funny.",
+		"Nic likes to repeat what he says many times.",
 		"Human: Hello, who are you?",
 		"Nic: Hello! My name is Nic! How can I help?",
-		"Mochi: *purrs*",
 		"Human: ",
 	},
-	maxLines: 10,
+	maxLines: 15,
 }
 
 type ClientGPT struct {
@@ -35,9 +34,15 @@ func (c *ClientGPT) Respond(prompt string) error {
 		Prompt: []string{
 			strings.Join(c.Lines, "\n") + prompt + "\nNic:",
 		},
-		MaxTokens:   gpt3.IntPtr(50),
-		Temperature: gpt3.Float32Ptr(0.9),
-		Stop:        []string{"Human:"},
+		MaxTokens:        gpt3.IntPtr(50),
+		Temperature:      gpt3.Float32Ptr(0.7),
+		TopP:             gpt3.Float32Ptr(1),
+		N:                gpt3.IntPtr(1),
+		Echo:             false,
+		Stop:             []string{"Human:"},
+		PresencePenalty:  0.4,
+		FrequencyPenalty: 0.5,
+		Stream:           false,
 	}
 	completion, err := c.Client.Completion(c.Context, completionRequest)
 	if err != nil {
@@ -79,7 +84,7 @@ func (c *ClientGPT) SetLast(s string) {
 
 func (c *ClientGPT) shift() {
 	l := len(c.Lines)
-	for i := 5; i < l-1; i++ {
+	for i := 6; i < l-1; i++ {
 		c.Lines[i] = c.Lines[i+1]
 	}
 }

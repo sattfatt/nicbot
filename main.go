@@ -10,10 +10,9 @@ import (
 func main() {
 
 	// get input from user
-	fmt.Print(gpt.Client.GetLines())
+
 	for {
-		last := gpt.Client.GetTrailing()
-		fmt.Print(last)
+		fmt.Print(gpt.Client.GetLines())
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
 		text := scanner.Text()
